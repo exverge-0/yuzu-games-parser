@@ -40,7 +40,7 @@ fn main() -> anyhow::Result<()> {
     println!("{}", serde_json::to_string_pretty(&serialize::Game {
         name: result.title.clone(),
         description: eshop.get(&eshop_id).unwrap().get("description").unwrap().as_str().unwrap().to_string(),
-        titleId: title_id,
+        title_id,
         img: eshop.get(&eshop_id).unwrap().get("iconUrl").unwrap().as_str().unwrap().to_string(),
         tests: result.testcases.iter().map(|x| serialize::testcase_to_test(x)).collect(),
     }).unwrap());

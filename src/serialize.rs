@@ -5,21 +5,22 @@ use crate::{OS, TestCase};
 pub struct Game {
     pub(crate) name: String,
     pub(crate) description: String,
-    pub(crate) titleId: String,
+    pub(crate) title_id: String,
     pub(crate) img: String,
     pub(crate) tests: Vec<Test>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Test {
-    pub(crate) tester: Option<String>,
-    pub(crate) rating: i8,
-    pub(crate) details: Option<String>,
-    pub(crate) cpu: String,
-    pub(crate) gpu: String,
-    pub(crate) version: String,
-    pub(crate) os: String,
-    pub(crate) from_yuzu: bool,
+    pub tester: Option<String>,
+    pub rating: i8,
+    pub details: Option<String>,
+    pub test_date: String,
+    pub cpu: String,
+    pub gpu: String,
+    pub version: String,
+    pub os: String,
+    pub from_yuzu: bool,
 }
 
 pub fn testcase_to_test(case: &TestCase) -> Test {
@@ -35,6 +36,7 @@ pub fn testcase_to_test(case: &TestCase) -> Test {
             _ => unreachable!()
         },
         details: None,
+        test_date: case.date.clone(),
         cpu: case.cpu.clone(),
         gpu: case.gpu.clone(),
         version: case.version.clone(),
