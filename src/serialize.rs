@@ -1,10 +1,11 @@
+use crate::{TestCase, OS};
 use serde::{Deserialize, Serialize};
-use crate::{OS, TestCase};
 
 #[derive(Serialize, Deserialize)]
 pub struct Game {
     pub(crate) name: String,
     pub(crate) description: String,
+    #[serde(rename = "titleId")]
     pub(crate) title_id: String,
     pub(crate) img: String,
     pub(crate) tests: Vec<Test>,
@@ -33,7 +34,7 @@ pub fn testcase_to_test(case: &TestCase) -> Test {
             3 => 3,
             4 => 2,
             5 => 1,
-            _ => unreachable!()
+            _ => unreachable!(),
         },
         details: None,
         test_date: case.date.clone(),
@@ -42,8 +43,9 @@ pub fn testcase_to_test(case: &TestCase) -> Test {
         version: case.version.clone(),
         os: match case.os {
             OS::Windows => "Windows",
-            OS::Linux => "Linux"
-        }.to_string(),
+            OS::Linux => "Linux",
+        }
+        .to_string(),
         from_yuzu: true,
     }
 }
