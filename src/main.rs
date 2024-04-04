@@ -10,17 +10,32 @@ fn main() -> anyhow::Result<()> {
 
     let mut result: Option<Game> = None;
 
-    for game in games {
-        if game.id == id {
-            result = Some(game);
-            break;
+    if id != "all" {
+        for game in games {
+            if game.id == id {
+                result = Some(game);
+                break;
+            }
         }
+    } else {
+        use std::path::Path;
+        use std::fs::*;
+        create_dir(Path::new("result")).expect("Failed to create dir");
+        for game in games {
+            write(Path::new(format!("result/{}.json", game.id).as_str()), get_and_serialize(&game, &eshop)).expect(format!("failed to write game {}", game.id).as_str());
+        }
+        return Ok(());
     }
     if result.is_none() {
         eprintln!("id not found");
         std::process::exit(1);
     }
     let result = result.unwrap();
+    println!("{}", get_and_serialize(&result, &eshop));
+    Ok(())
+}
+
+fn get_and_serialize(result: &Game, eshop: &Value) -> String {
     let title_id = result.releases.get(0).unwrap().id.clone();
 
     let mut eshop_id = String::new();
@@ -37,14 +52,18 @@ fn main() -> anyhow::Result<()> {
         std::process::exit(1);
     }
 
-    println!("{}", serde_json::to_string_pretty(&serialize::Game {
+    serialize(result, &eshop, eshop_id, title_id)
+}
+
+fn serialize(result: &Game, eshop: &Value, eshop_id: String, title_id: String) -> String {
+    println!("{}", eshop_id);
+    serde_json::to_string_pretty(&serialize::Game {
         name: result.title.clone(),
-        description: eshop.get(&eshop_id).unwrap().get("description").unwrap().as_str().unwrap().to_string(),
+        description: eshop.get(&eshop_id).unwrap().get("description").unwrap().as_str().unwrap_or("null").to_string(),
         title_id,
-        img: eshop.get(&eshop_id).unwrap().get("iconUrl").unwrap().as_str().unwrap().to_string(),
+        img: eshop.get(&eshop_id).unwrap().get("iconUrl").unwrap().as_str().unwrap_or("null").to_string(),
         tests: result.testcases.iter().map(|x| serialize::testcase_to_test(x)).collect(),
-    }).unwrap());
-    Ok(())
+    }).unwrap()
 }
 
 #[derive(Deserialize, Serialize)]
