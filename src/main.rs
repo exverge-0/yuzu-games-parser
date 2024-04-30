@@ -1,3 +1,26 @@
+/*
+MIT License
+
+Copyright (c) 2024 Exverge (exverge@exverge.xyz)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. */
+
 mod serialize;
 
 use serde::{Deserialize, Serialize};
@@ -18,11 +41,15 @@ fn main() -> anyhow::Result<()> {
             }
         }
     } else {
-        use std::path::Path;
         use std::fs::*;
+        use std::path::Path;
         create_dir(Path::new("result")).expect("Failed to create dir");
         for game in games {
-            write(Path::new(format!("result/{}.json", game.id).as_str()), get_and_serialize(&game, &eshop)).expect(format!("failed to write game {}", game.id).as_str());
+            write(
+                Path::new(format!("result/{}.json", game.id).as_str()),
+                get_and_serialize(&game, &eshop),
+            )
+            .expect(format!("failed to write game {}", game.id).as_str());
         }
         return Ok(());
     }
@@ -41,7 +68,9 @@ fn get_and_serialize(result: &Game, eshop: &Value) -> String {
     let mut eshop_id = String::new();
     for (str, title) in eshop.as_object().unwrap() {
         let id = title.get("id").unwrap().as_str();
-        if id.is_none() { continue; }
+        if id.is_none() {
+            continue;
+        }
         if id.unwrap().to_string() == title_id {
             eshop_id = str.clone();
             break;
@@ -59,11 +88,30 @@ fn serialize(result: &Game, eshop: &Value, eshop_id: String, title_id: String) -
     println!("{}", eshop_id);
     serde_json::to_string_pretty(&serialize::Game {
         name: result.title.clone(),
-        description: eshop.get(&eshop_id).unwrap().get("description").unwrap().as_str().unwrap_or("null").to_string(),
+        description: eshop
+            .get(&eshop_id)
+            .unwrap()
+            .get("description")
+            .unwrap()
+            .as_str()
+            .unwrap_or("null")
+            .to_string(),
         title_id,
-        img: eshop.get(&eshop_id).unwrap().get("iconUrl").unwrap().as_str().unwrap_or("null").to_string(),
-        tests: result.testcases.iter().map(|x| serialize::testcase_to_test(x)).collect(),
-    }).unwrap()
+        img: eshop
+            .get(&eshop_id)
+            .unwrap()
+            .get("iconUrl")
+            .unwrap()
+            .as_str()
+            .unwrap_or("null")
+            .to_string(),
+        tests: result
+            .testcases
+            .iter()
+            .map(|x| serialize::testcase_to_test(x))
+            .collect(),
+    })
+    .unwrap()
 }
 
 #[derive(Deserialize, Serialize)]
