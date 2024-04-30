@@ -1,4 +1,3 @@
-<!--
 MIT License
 
 Copyright (c) 2024 Exverge (exverge@exverge.xyz)
@@ -20,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
--->
-
-# yuzu-games-parser
-Parser for yuzu's games compatibility API into another per-game format 
-
-`yuzu-games-parser <game_id>`
-
-Originally to be used for the suyu website, however this can be used for anything. (assuming you follow the license)
